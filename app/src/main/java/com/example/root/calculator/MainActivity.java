@@ -33,6 +33,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     EditText edit_input;
 
+    private boolean flag = false;
+    private boolean flag_oper = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,17 +96,31 @@ public class MainActivity extends Activity implements View.OnClickListener {
             case R.id.bt_8:
             case R.id.bt_9:
             case R.id.bt_point:
+                if (flag) {
+                    str = "";
+                    flag = false;
+                }
                 edit_input.setText(str + ((Button)view).getText());
                 break;
             case R.id.bt_plus:
             case R.id.bt_sub:
             case R.id.bt_multi:
             case R.id.bt_divide:
-                edit_input.setText(str + " " + ((Button)view).getText() + " ");
+                flag = false;
+                if (!flag_oper) {
+                    edit_input.setText(str + " " + ((Button) view).getText() + " ");
+                    flag_oper = true;
+                }
                 break;
             case R.id.bt_del:
-                if (str != null && !str.equals(""))
+                if (flag) {
+                    str = "";
+                    flag = false;
+                    edit_input.setText(str);
+                }
+                if (str != null && !str.equals("")) {
                     edit_input.setText(str.substring(0, str.length() - 1));
+                }
                 break;
             case R.id.bt_c:
                 edit_input.setText("");
@@ -116,13 +133,53 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private void getResult() {
         String exp = edit_input.getText().toString();
-        if (exp == null && exp.equals(""))
+        if (exp == null || exp.equals("") || !exp.contains(" ")) {
             return;
-        else if (!exp.contains(" "))
-            return;
+        }
         else {
+            String s1 = exp.substring(0, exp.indexOf(" "));
+            String operator = exp.substring(exp.indexOf(" ") + 1, exp.indexOf(" ") + 2);
+            String s2 = exp.substring(exp.indexOf(" ") + 3, exp.length());
 
-        };
+            if (!s1.equals("") && !s2.equals("")) {
+                float n1 = Float.parseFloat(s1);
+                float n2 = Float.parseFloat(s2);
+                float resultN = 0;
+
+                if (operator.equals("+")) {
+                    resultN = n1 + n2;
+                } else if (operator.equals("-")) {
+                    resultN = n1 - n2;
+                } else if (operator.equals("*")) {
+                    resultN = n1 * n2;
+                } else if (operator.equals("/")) {
+                    if (n2 == 0) {
+                        edit_input.setText("error by 0");
+                        return;
+                    }
+                    resultN = n1 / n2;
+                }
+
+                String result = Float.toString(resultN);
+                String[] spl = result.split("\\.");
+                int decimal = Integer.parseInt(spl[1]);
+                if (decimal == 0) {
+                    result = spl[0];
+                }
+                edit_input.setText(result);
+                flag = true;
+                flag_oper = false;
+                return;
+            }
+
+            else if (!s1.equals("") || s2.equals("")) {
+                return;
+            }
+            else {
+                edit_input.setText("");
+            }
+
+        }
 
     }
 }
