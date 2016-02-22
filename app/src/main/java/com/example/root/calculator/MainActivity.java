@@ -33,8 +33,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     EditText edit_input;
 
-    private boolean flag = false;
+    private boolean flag_next = false;
     private boolean flag_oper = false;
+//    private boolean flag_input = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,34 +97,40 @@ public class MainActivity extends Activity implements View.OnClickListener {
             case R.id.bt_8:
             case R.id.bt_9:
             case R.id.bt_point:
-                if (flag) {
+                if (flag_next) {
                     str = "";
-                    flag = false;
+                    flag_next = false;
                 }
-                edit_input.setText(str + ((Button)view).getText());
+                str = str + ((Button)view).getText();
+                edit_input.setText(str);
                 break;
             case R.id.bt_plus:
             case R.id.bt_sub:
             case R.id.bt_multi:
             case R.id.bt_divide:
-                flag = false;
-                if (!flag_oper) {
-                    edit_input.setText(str + " " + ((Button) view).getText() + " ");
-                    flag_oper = true;
+                if (!str.equals("")) {
+                    flag_next = false;
+                    if (!flag_oper) {
+                        str = str + " " + ((Button) view).getText() + " ";
+                        edit_input.setText(str);
+                        flag_oper = true;
+                    }
                 }
                 break;
             case R.id.bt_del:
-                if (flag) {
+                if (flag_next) {
                     str = "";
-                    flag = false;
+                    flag_next = false;
                     edit_input.setText(str);
                 }
                 if (str != null && !str.equals("")) {
-                    edit_input.setText(str.substring(0, str.length() - 1));
+                    str = str.substring(0, str.length() - 1);
+                    edit_input.setText(str);
                 }
                 break;
             case R.id.bt_c:
-                edit_input.setText("");
+                str = "";
+                edit_input.setText(str);
                 break;
             case R.id.bt_eq:
                 getResult();
@@ -154,7 +161,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     resultN = n1 * n2;
                 } else if (operator.equals("/")) {
                     if (n2 == 0) {
-                        edit_input.setText("error by 0");
+                        edit_input.setText("");
                         return;
                     }
                     resultN = n1 / n2;
@@ -167,7 +174,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     result = spl[0];
                 }
                 edit_input.setText(result);
-                flag = true;
+                flag_next = true;
                 flag_oper = false;
                 return;
             }
