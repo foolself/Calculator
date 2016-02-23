@@ -35,6 +35,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private boolean flag_next = false;
     private boolean flag_oper = false;
+//    private boolean flag_point = false;
 //    private boolean flag_input = false;
 
     @Override
@@ -124,13 +125,21 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     edit_input.setText(str);
                 }
                 if (str != null && !str.equals("")) {
-                    str = str.substring(0, str.length() - 1);
+                    String str_last = str.substring(str.length() - 1, str.length());
+                    if (str_last.equals(" ")) {
+                        str = str.substring(0, str.length() - 3);
+                        flag_oper = false;
+                    }
+                    else {
+                        str = str.substring(0, str.length() - 1);
+                    }
                     edit_input.setText(str);
                 }
                 break;
             case R.id.bt_c:
                 str = "";
                 edit_input.setText(str);
+                flag_oper = false;
                 break;
             case R.id.bt_eq:
                 getResult();
@@ -162,6 +171,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 } else if (operator.equals("/")) {
                     if (n2 == 0) {
                         edit_input.setText("");
+                        flag_oper = false;
                         return;
                     }
                     resultN = n1 / n2;
