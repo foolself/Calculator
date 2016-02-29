@@ -35,8 +35,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private boolean flag_next = false;
     private boolean flag_oper = false;
-//    private boolean flag_point = false;
-//    private boolean flag_input = false;
+    private boolean flag_first_number = true;
+    private boolean flag_second_number = false;
+    private boolean flag_first_point = false;
+    private boolean flag_second_point = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,13 +100,30 @@ public class MainActivity extends Activity implements View.OnClickListener {
             case R.id.bt_7:
             case R.id.bt_8:
             case R.id.bt_9:
-            case R.id.bt_point:
                 if (flag_next) {
                     str = "";
                     flag_next = false;
                 }
                 str = str + ((Button)view).getText();
                 edit_input.setText(str);
+                break;
+            case R.id.bt_point:
+                if (flag_next) {
+                    str = "";
+                    flag_next = false;
+                }
+                if (flag_first_number && !flag_first_point) {
+                    str = str + ((Button)view).getText();
+                    edit_input.setText(str);
+                    flag_first_point = true;
+                    break;
+                }
+                if (flag_second_number && !flag_second_point) {
+                    str = str + ((Button)view).getText();
+                    edit_input.setText(str);
+                    flag_second_point = true;
+                    break;
+                }
                 break;
             case R.id.bt_plus:
             case R.id.bt_sub:
@@ -115,6 +135,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         str = str + " " + ((Button) view).getText() + " ";
                         edit_input.setText(str);
                         flag_oper = true;
+                        flag_first_number = false;
+                        flag_second_number = true;
                     }
                 }
                 break;
@@ -129,6 +151,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     if (str_last.equals(" ")) {
                         str = str.substring(0, str.length() - 3);
                         flag_oper = false;
+                        flag_first_number = true;
+                        flag_second_number = false;
+                    }
+                    else if (str_last.equals(".")) {
+                        str = str.substring(0, str.length() - 1);
+                        if (flag_first_number) flag_first_point = false;
+                        if (flag_second_number) flag_second_point = false;
                     }
                     else {
                         str = str.substring(0, str.length() - 1);
@@ -186,6 +215,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 edit_input.setText(result);
                 flag_next = true;
                 flag_oper = false;
+                flag_first_number = true;
+                flag_first_point = false;
+                flag_second_number = false;
+                flag_second_point = false;
                 return;
             }
 
