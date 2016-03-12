@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioGroup;
 
 import static com.example.root.calculator.R.drawable.gray_bg;
@@ -16,6 +17,8 @@ import static com.example.root.calculator.R.drawable.white_selector;
  * Created by root on 16-3-11.
  */
 public class ProActivity extends Activity implements View.OnClickListener{
+    private ImageView back;
+
     private RadioGroup rg_radix;
 
     private Button bt_A;
@@ -64,6 +67,7 @@ public class ProActivity extends Activity implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cal_pro);
 
+        back = (ImageView) findViewById(R.id.back);
         rg_radix = (RadioGroup) findViewById(R.id.sel_radix);
 
         bt_A = (Button) findViewById(R.id.A);
@@ -125,6 +129,14 @@ public class ProActivity extends Activity implements View.OnClickListener{
                 }
             }
         });
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
 
         bt_A.setOnClickListener(this);
         bt_B.setOnClickListener(this);
@@ -286,8 +298,20 @@ public class ProActivity extends Activity implements View.OnClickListener{
 
             if (!s1.equals("") && !s2.equals("")
                     && (!s1.equals(".") && !s2.equals("."))) {
-                float n1 = Float.parseFloat(s1);
-                float n2 = Float.parseFloat(s2);
+
+                float n1;
+                float n2;
+
+                // radix translation, any to dec
+                if (flag_radix == 10) {
+                    n1 = Float.parseFloat(s1);
+                    n2 = Float.parseFloat(s2);
+                }
+                else {
+                    n1 = Integer.valueOf(s1, flag_radix);
+                    n2 = Integer.valueOf(s2, flag_radix);
+
+                }
                 float resultN = 0;
 
                 if (operator.equals("+")) {
@@ -304,14 +328,41 @@ public class ProActivity extends Activity implements View.OnClickListener{
                     }
                     resultN = n1 / n2;
                 }
-
+                Log.i("tag", "resultN: " + resultN);
                 String result = Float.toString(resultN);
                 String[] spl = result.split("\\.");
                 int decimal = Integer.parseInt(spl[1]);
+
                 if (decimal == 0) {
                     result = spl[0];
+                    switch (flag_radix) {
+                        case 2:
+                            flag_radix = 10;
+                            toBin(result);
+                            flag_radix = 2;
+                            break;
+                        case 8:
+                            flag_radix = 10;
+                            toOct(result);
+                            flag_radix = 8;
+                            break;
+                        case 10:
+                            edit_input.setText(result);
+                            break;
+                        case 16:
+                            flag_radix = 10;
+                            toHex(result);
+                            flag_radix = 16;
+                            break;
+                    }
                 }
-                edit_input.setText(result);
+                else if (flag_radix == 10){
+                    edit_input.setText(result);
+                }
+                else {
+                    edit_input.setText("");
+                }
+
                 flag_next = true;
                 init_next();
                 return;
@@ -328,7 +379,6 @@ public class ProActivity extends Activity implements View.OnClickListener{
 
     }
 
-//        int n = Integer.parseInt(dec);
     private void toBin(String str) {
         int dec = Integer.valueOf(str, flag_radix);
         String str_bin = Integer.toBinaryString(dec);
@@ -342,7 +392,6 @@ public class ProActivity extends Activity implements View.OnClickListener{
     private void toDec(String str) {
         int dec = Integer.valueOf(str, flag_radix);
         String str_dec = Integer.toString(dec);
-        Log.i("tag",str_dec);
         edit_input.setText(str_dec);
     }
     private void toHex(String str) {

@@ -91,14 +91,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
         bt_del.setOnClickListener(this);
         bt_c.setOnClickListener(this);
         bt_eq.setOnClickListener(this);
-
-//        switch_pro.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent = new Intent(MainActivity.this, ProActivity.class);
-//                startActivity(intent);
-//            }
-//        });
     }
 
     @Override
