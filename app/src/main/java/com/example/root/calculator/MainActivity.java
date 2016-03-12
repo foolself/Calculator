@@ -2,6 +2,7 @@ package com.example.root.calculator;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,9 +10,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity implements View.OnClickListener {
+    private ImageView switch_pro;
+
     private Button bt_0;
     private Button bt_1;
     private Button bt_2;
@@ -45,6 +49,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calculator);
+
+        switch_pro = (ImageView) findViewById(R.id.switch_pro);
+        switch_pro.setOnClickListener(this);
 
         bt_0 = (Button) findViewById(R.id.bt_0);
         bt_1 = (Button) findViewById(R.id.bt_1);
@@ -84,12 +91,25 @@ public class MainActivity extends Activity implements View.OnClickListener {
         bt_del.setOnClickListener(this);
         bt_c.setOnClickListener(this);
         bt_eq.setOnClickListener(this);
+
+//        switch_pro.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(MainActivity.this, ProActivity.class);
+//                startActivity(intent);
+//            }
+//        });
     }
 
     @Override
     public void onClick(View view) {
         String str = edit_input.getText().toString();
         switch (view.getId()) {
+            case R.id.switch_pro:
+                Intent intent = new Intent(MainActivity.this, ProActivity.class);
+                startActivity(intent);
+                break;
+
             case R.id.bt_0:
             case R.id.bt_1:
             case R.id.bt_2:
@@ -168,7 +188,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             case R.id.bt_c:
                 str = "";
                 edit_input.setText(str);
-                flag_oper = false;
+                init_next();
                 break;
             case R.id.bt_eq:
                 getResult();
@@ -186,7 +206,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
             String operator = exp.substring(exp.indexOf(" ") + 1, exp.indexOf(" ") + 2);
             String s2 = exp.substring(exp.indexOf(" ") + 3, exp.length());
 
-            if (!s1.equals("") && !s2.equals("")) {
+            if (!s1.equals("") && !s2.equals("")
+                    && (!s1.equals(".") && !s2.equals("."))) {
                 float n1 = Float.parseFloat(s1);
                 float n2 = Float.parseFloat(s2);
                 float resultN = 0;
@@ -200,7 +221,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 } else if (operator.equals("/")) {
                     if (n2 == 0) {
                         edit_input.setText("");
-                        flag_oper = false;
+                        init_next();
                         return;
                     }
                     resultN = n1 / n2;
@@ -214,11 +235,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 }
                 edit_input.setText(result);
                 flag_next = true;
-                flag_oper = false;
-                flag_first_number = true;
-                flag_first_point = false;
-                flag_second_number = false;
-                flag_second_point = false;
+                init_next();
                 return;
             }
 
@@ -231,5 +248,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         }
 
+    }
+
+    private void init_next() {
+        flag_oper = false;
+        flag_first_number = true;
+        flag_second_number = false;
+        flag_first_point = false;
+        flag_second_point = false;
     }
 }
